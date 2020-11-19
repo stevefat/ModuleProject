@@ -1,0 +1,8 @@
+include ':arouter_api'
+include ':arouter_compiler'
+include ':arouter_annotation'
+include ':order'
+include ':common'
+include ':personal'
+include ':app'
+rootProject.name = "ModuleProject"

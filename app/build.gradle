@@ -1,0 +1,91 @@
+plugins {
+    id 'com.android.application'
+}
+
+def app_android = this.getRootProject().ext.app_android;
+def app_dependencies = this.getRootProject().ext.app_dependencies;
+
+android {
+    compileSdkVersion app_android.compileSdkVersion
+    buildToolsVersion app_android.buildToolsVersion
+
+    println("在构建app.gradle中。。。。。")
+
+    defaultConfig {
+        applicationId app_android.applicationId
+        minSdkVersion app_android.minSdkVersion
+        targetSdkVersion app_android.targetSdkVersion
+        versionCode app_android.versionCode
+        versionName app_android.versionName
+        testInstrumentationRunner app_android.testInstrumentationRunner
+
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+
+        // 在gradle文件中配置选项参数值（用于APT传参接收）
+        // 切记：必须写在defaultConfig节点下
+        javaCompileOptions{
+            annotationProcessorOptions{
+                arguments = [moduleName:project.getName(),packageNameForAPT:packageNameForAPT]
+            }
+        }
+
+    }
+
+    buildTypes {
+        debug{
+            // 增加服务器URL地址---是在测试环境下
+            buildConfigField("String", "SERVER_URL", "\"${url.debug}\"")
+        }
+        release {
+            // 增加服务器URL地址---是在测试环境下
+            buildConfigField("String", "SERVER_URL", "\"${url.release}\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main {
+            if (!isRelease) {
+                // 如果是组件化模式，需要单独运行时
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                java.srcDirs = ['src/main/java']
+                res.srcDirs = ['src/main/res']
+                resources.srcDirs = ['src/main/resources']
+                aidl.srcDirs = ['src/main/aidl']
+                assets.srcDirs = ['src/main/assets']
+            } else {
+                // 集成化模式，整个项目打包
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    app_dependencies.each { k, v ->
+        implementation v
+    }
+    //公共基础库
+    implementation project(":common")
+
+
+    // 依赖注解
+    implementation project(":arouter_annotation")
+    // 依赖注解处理器 注解处理器才能工作
+    annotationProcessor project(":arouter_compiler")
+
+
+    if(isRelease){
+        implementation project(":order")
+        implementation project(":personal")
+    }
+
+
+
+}

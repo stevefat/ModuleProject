@@ -1,0 +1,31 @@
+ext {
+    //测试环境 /正式环境
+    isRelease = true
+
+    packageNameForAPT = "com.ngh.moduleproject"
+
+    app_android = [
+            compileSdkVersion        : 30,
+            buildToolsVersion        : "30.0.2",
+            applicationId            : "com.ngh.moduleproject",
+            minSdkVersion            : 21,
+            targetSdkVersion         : 30,
+            versionCode              : 1,
+            versionName              : "1.0",
+            testInstrumentationRunner: "androidx.test.runner.AndroidJUnitRunner"
+    ]
+    app_appid = [
+            "order"    : "com.ngh.order",
+            "persional": "com.ngh.personal"
+    ]
+    url = [
+            "debug"  : "http://192.168.5.51:8802",
+            "release": "http://www.jianbiaoku.com"
+    ]
+    app_dependencies = [
+            "appcompat"       : 'androidx.appcompat:appcompat:1.2.0',
+            "material"        : 'com.google.android.material:material:1.2.1',
+            "constraintlayout": 'androidx.constraintlayout:constraintlayout:2.0.2'
+    ]
+
+}
